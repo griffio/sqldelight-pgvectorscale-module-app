@@ -1,0 +1,15 @@
+services:
+  postgres:
+    # timescaledb-ha bundles pgvector and pgvectorscale (the vectorscale extension)
+    image: timescale/timescaledb-ha:pg17
+    container_name: pgvectorscale
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: vector
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/home/postgres/pgdata
+
+volumes:
+  pgdata:
