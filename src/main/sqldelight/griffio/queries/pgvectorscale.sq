@@ -1,0 +1,32 @@
+-- Query-time diskann GUCs. SET values cannot be bind parameters (literals only).
+-- LOCAL scopes the setting to the enclosing transaction, which is required here:
+-- outside a transaction the JDBC driver uses a fresh connection per statement,
+-- so a session-level SET would not affect the query that follows.
+setDiskannQuerySearchListSize:
+SET LOCAL diskann.query_search_list_size = 200;
+
+setDiskannQueryRescore:
+SET LOCAL diskann.query_rescore = 100;
+
+-- Same shape as movie.sq similaritySearch; served by the diskann index after V3
+similaritySearchDiskann:
+WITH search(vec) AS (
+  SELECT jsonb_path_query_first(:embeddingResponse::JSONB, '$.data[*].embedding')::TEXT::VECTOR
+)
+SELECT id, title, year, genre, 1 - (embedding <=> search.vec) AS similarityScore
+FROM movie_plots, search
+ORDER BY embedding <=> search.vec
+LIMIT 5;
+
+-- Label-filtered search (V4). The ::SMALLINT[] cast is load-bearing twice:
+-- SQLDelight infers the bind type from the cast (generating Array<Short>), and
+-- Postgres matches smallint[] && smallint[] exactly so the label index is usable
+similaritySearchDiskannFiltered:
+WITH search(vec) AS (
+  SELECT jsonb_path_query_first(:embeddingResponse::JSONB, '$.data[*].embedding')::TEXT::VECTOR
+)
+SELECT id, title, year, genre, labels, 1 - (embedding <=> search.vec) AS similarityScore
+FROM movie_plots, search
+WHERE labels && :labels::SMALLINT[]
+ORDER BY embedding <=> search.vec
+LIMIT 5;

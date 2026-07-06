@@ -1,0 +1,12 @@
+-- pgvectorscale adds the StreamingDiskANN index access method on top of pgvector
+-- CASCADE installs the required pgvector extension if missing
+CREATE EXTENSION IF NOT EXISTS vectorscale CASCADE;
+
+-- Replace the hnsw cosine index so the diskann index is the one serving the
+-- movie similarity queries (keeping both doubles index maintenance and makes
+-- it ambiguous which index the planner uses)
+DROP INDEX idx_movie_embedding_hnsw;
+
+CREATE INDEX idx_movie_embedding_diskann ON movie_plots
+USING diskann (embedding vector_cosine_ops)
+WITH (storage_layout = memory_optimized, num_neighbors = 50, search_list_size = 100, max_alpha = 1.2);

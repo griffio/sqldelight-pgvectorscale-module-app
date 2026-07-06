@@ -1,0 +1,21 @@
+-- pgvectorscale label-based filtered search: labels must be SMALLINT[]
+-- label ids: 1 = Sci-Fi, 2 = Drama, 3 = Comedy, 4 = Thriller
+ALTER TABLE movie_plots ADD COLUMN labels SMALLINT[];
+
+-- Text array literals ('{1,4}') are used because SQLDelight 2.3.2 does not parse
+-- ARRAY[...] constructor syntax; the ::SMALLINT[] casts keep both sides of the
+-- && overlap operator smallint[] so the label index stays usable
+UPDATE movie_plots SET labels = '{1,4}'::SMALLINT[] WHERE genre LIKE '%Sci-Fi%' AND genre LIKE '%Thriller%';
+UPDATE movie_plots SET labels = '{1,2,3}'::SMALLINT[] WHERE genre LIKE '%Sci-Fi%' AND genre LIKE '%Drama%' AND genre LIKE '%Comedy%';
+UPDATE movie_plots SET labels = '{1,2}'::SMALLINT[] WHERE genre LIKE '%Sci-Fi%' AND genre LIKE '%Drama%' AND genre NOT LIKE '%Comedy%';
+UPDATE movie_plots SET labels = '{1}'::SMALLINT[] WHERE genre LIKE '%Sci-Fi%' AND labels IS NULL;
+UPDATE movie_plots SET labels = '{2}'::SMALLINT[] WHERE genre LIKE '%Drama%' AND labels IS NULL;
+UPDATE movie_plots SET labels = '{3,4}'::SMALLINT[] WHERE genre LIKE '%Comedy%' AND genre LIKE '%Thriller%' AND labels IS NULL;
+UPDATE movie_plots SET labels = '{3}'::SMALLINT[] WHERE genre LIKE '%Comedy%' AND labels IS NULL;
+UPDATE movie_plots SET labels = '{}'::SMALLINT[] WHERE labels IS NULL;
+
+-- Multi-column diskann index: vector operator class plus the label column
+DROP INDEX idx_movie_embedding_diskann;
+
+CREATE INDEX idx_movie_embedding_diskann_labels ON movie_plots
+USING diskann (embedding vector_cosine_ops, labels);
