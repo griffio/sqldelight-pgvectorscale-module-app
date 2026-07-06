@@ -6,7 +6,7 @@ https://github.com/cashapp/sqldelight
 
 Use with SqlDelight `2.3.x` or higher
 
-Supports[pgvectorscale](https://github.com/timescale/pgvectorscale) extension
+Supports [pgvectorscale](https://github.com/timescale/pgvectorscale) extension
 (StreamingDiskANN `diskann` index, index build parameters, query-time tuning and
 label-based filtered search).
 
