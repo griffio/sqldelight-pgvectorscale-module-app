@@ -7,7 +7,7 @@ plugins {
     id("org.jreleaser") version "1.18.0"
 }
 
-version = "0.0.1"
+version = "0.0.2"
 group = "io.github.griffio"
 
 repositories {
@@ -39,7 +39,7 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
-            artifactId = "sqldelight-pgvectorsclae"
+            artifactId = "sqldelight-pgvectorscale"
             groupId = project.group.toString()
             version = project.version.toString()
 

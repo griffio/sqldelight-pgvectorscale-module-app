@@ -28,7 +28,7 @@ sqldelight {
             packageName.set("griffio.queries")
             dialect(libs.sqldelight.postgresql.dialect)
             module(project(":pgvectorscale-module")) // module can be local project
-            // or external dependency module("io.github.griffio:sqldelight-pgvectorscale:0.0.1")
+            // or external dependency module("io.github.griffio:sqldelight-pgvectorscale:0.0.2")
         }
     }
 }
@@ -36,7 +36,7 @@ sqldelight {
 
 module published in Maven Central https://central.sonatype.com/artifact/io.github.griffio/sqldelight-pgvectorscale/versions
 
-`io.github.griffio:sqldelight-pgvectorscale:0.0.1`
+`io.github.griffio:sqldelight-pgvectorscale:0.0.2`
 
 ```sql
 
