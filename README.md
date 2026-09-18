@@ -28,7 +28,7 @@ sqldelight {
             packageName.set("griffio.queries")
             dialect(libs.sqldelight.postgresql.dialect)
             module(project(":pgvectorscale-module")) // module can be local project
-            // or external dependency module("io.github.griffio:sqldelight-pgvectorscale:0.0.2")
+            // or external dependency module("io.github.griffio:sqldelight-pgvectorscale:0.0.3")
         }
     }
 }
@@ -36,7 +36,7 @@ sqldelight {
 
 module published in Maven Central https://central.sonatype.com/artifact/io.github.griffio/sqldelight-pgvectorscale/versions
 
-`io.github.griffio:sqldelight-pgvectorscale:0.0.2`
+`io.github.griffio:sqldelight-pgvectorscale:0.0.3`
 
 ```sql
 
@@ -137,8 +137,8 @@ sample.pgvectorscaleQueries.transactionWithResult {
 
 Notes
 
-* SqlDelight `2.3.2` does not parse `ARRAY[1,2]` constructor syntax (added to the
-  PostgreSql dialect after 2.3.2) - use text array literals with a cast instead:
+* SqlDelight `2.4.0` parses `ARRAY[1,2]` constructor syntax. Earlier versions (`2.3.2`)
+  do not, so the sample migrations use text array literals with a cast instead:
   `'{1,2}'::SMALLINT[]`
 * Migrations `V1`/`V2` run on plain pgvector; `V3` onwards require the `vectorscale`
   extension (use the docker-compose setup below, or install pgvectorscale locally).

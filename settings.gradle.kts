@@ -14,7 +14,7 @@ rootProject.name = "sqldelight-pgvectorscale-module-app"
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
-            val vSqlDelight = "2.3.2"
+            val vSqlDelight = "2.4.0"
             val vIntellij = "231.9392.1"
             version("intellij", vIntellij)
             val vKotlin = "2.3.10"
